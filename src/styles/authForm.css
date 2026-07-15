@@ -1,0 +1,216 @@
+/* src/styles/authForm.css */
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+
+.auth-page-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+  /* Swapped to a warm cream gradient matching your website's background */
+  background: radial-gradient(circle at 10% 20%, #fffdfa 0%, #f7f3eb 100%);
+  padding: 2rem 1rem;
+  font-family: "Plus Jakarta Sans", sans-serif;
+}
+
+/* Glassmorphism card */
+.auth-card {
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #f3ebe1;
+  border-radius: 16px;
+  /* Warm subtle shadow instead of teal */
+  box-shadow:
+    0 10px 30px rgba(223, 122, 21, 0.05),
+    0 1px 8px rgba(0, 0, 0, 0.02);
+  width: 100%;
+  max-width: 480px;
+  padding: 2.5rem;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.auth-card.broad {
+  max-width: 640px;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-header h2 {
+  color: #111827; /* Deep charcoal for headers */
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 480px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group label {
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: #fdfdfd;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #111827;
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Input focus now uses the warm orange brand color */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  background: #ffffff;
+  border-color: #df7a15;
+  box-shadow: 0 0 0 4px rgba(223, 122, 21, 0.15);
+}
+
+/* Checkbox alignment */
+.form-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-checkbox-group input[type="checkbox"] {
+  accent-color: #df7a15; /* Orange checkbox */
+  cursor: pointer;
+  height: 16px;
+  width: 16px;
+}
+
+.form-checkbox-group label {
+  color: #475569;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.form-checkbox-group a {
+  color: #df7a15; /* Orange Links */
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.form-checkbox-group a:hover {
+  text-decoration: underline;
+}
+
+.form-actions-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.forgot-password-link {
+  font-size: 0.85rem;
+  color: #df7a15;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+/* Brand Orange Button */
+.auth-primary-btn {
+  background: #df7a15; /* Brand Orange */
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.85rem;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.auth-primary-btn:hover {
+  background: #c2650d; /* Darker orange hover state */
+  transform: translateY(-1px);
+}
+
+.auth-primary-btn:active {
+  transform: translateY(0);
+}
+
+/* Error banner */
+.auth-error-message {
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+}
+
+/* Footer options */
+.auth-footer {
+  margin-top: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.auth-footer p {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.auth-footer a {
+  color: #df7a15;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.alternative-option {
+  border-top: 1px solid #f3ebe1;
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}

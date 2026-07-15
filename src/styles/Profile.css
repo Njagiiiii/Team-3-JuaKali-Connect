@@ -1,0 +1,40 @@
+/* Color overrides for your profile CSS file */
+
+/* 1. Main Buttons */
+.profile-container .btn-primary {
+  background-color: #df7a15 !important; /* Brand Orange */
+  color: #ffffff !important;
+  border: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.profile-container .btn-primary:hover {
+  background-color: #c2650d !important; /* Darker orange on hover */
+}
+
+/* 2. Stat Counts */
+.profile-stats h3 {
+  color: #df7a15 !important; /* Brand Orange highlight */
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+}
+
+/* 3. Text & Headings */
+.profile-info h2,
+.reviews-section h2 {
+  color: #111827 !important; /* Deep Charcoal */
+}
+
+/* 4. Background and card borders */
+.profile-card {
+  background: #ffffff;
+  border: 1px solid #f3ebe1 !important; /* Warm Cream boundary border */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(223, 122, 21, 0.03) !important;
+}
+
+/* 5. Review Cards rating stars color */
+.review-card h4 {
+  color: #df7a15 !important; /* Orange Stars */
+}
