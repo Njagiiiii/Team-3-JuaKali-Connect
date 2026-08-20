@@ -2,10 +2,10 @@
 
 #1. Team Members & Starting Roles
 
-- **API Lead:** Naliaka Patience Ovamba (Admission No: 222191)
-- **Backend Lead:** Njagi Rose Melisa Kendi (Admission No: 221363)
-- **Integration / QA Lead:** Ryan Amani (Admission No: 221741)
-- **Docs / DevOps Lead:** Sean Ochieng
+- *API Lead:* Naliaka Patience Ovamba (Admission No: 222191)
+- *Backend Lead:* Njagi Rose Melisa Kendi (Admission No: 221363)
+- *Integration / QA Lead:* Ryan Amani (Admission No: 221741)
+- *Docs / DevOps Lead:* Sean Ochieng
 
 ##2. Application Summary
 Jua Kali Connect is a web-based marketplace application designed to bridge the gap between skilled informal sector artisans such as carpenters, plumbers, electricians and painters with everyday customers across Kenya seeking reliable home services. The platform allows customers to discover local artisans by trade category or location, view detailed profiles and ratings, schedule job appointments and choose service plans. Simultaneously, it provides an onboarding ecosystem for artisans to register their skills, manage client bookings, upgrade subscription tiers for increased visibility, and access training courses to advance their trade craftsmanship.
