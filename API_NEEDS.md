@@ -1,0 +1,41 @@
+Rose Njagi- 221363
+Patience Naliaka Ovamba- 222191
+Ryan Amani- 221741
+
+
+API Needs Statements.
+ArtistsVenue Funds needs to search artisan and service data in order to allow users to find suitable artisans for their event-related needs.
+
+ArtistsVenue Funds needs to authenticate users through Jua Kali Connect in order to allow its users to securely access Jua Kali Connect services and perform authorized actions.
+Freshness: Real-time
+Volume: On login and when an authenticated session needs to be established or verified
+Auth: Yes
+ArtistsVenue Funds needs to read and create booking data in Jua Kali Connect in order to allow users to arrange and manage bookings with artisans.
+Freshness: Real-time
+Volume: On booking creation, viewing, or changes
+Auth: Yes
+ArtistsVenue Funds needs to update existing booking data in Jua Kali Connect in order to allow users to modify booking information and keep booking status current.
+Freshness: Real-time
+Volume: Whenever a booking is changed
+Auth: Yes
+ArtistsVenue Funds needs to search Jua Kali Connect's artisan and service data in order to allow users to find suitable artisans and services for their needs.
+Freshness: Real-time
+Volume: Whenever a user performs a search
+Auth: Basic search can be public; protected information should require authentication.
+ArtistsVenue Funds needs to create and change relevant user and booking data in Jua Kali Connect in order to complete actions on behalf of its users and keep information synchronized between the two applications.
+Freshness: Real-time
+Volume: On user action
+Auth: Yes
+Additional Audit Finding
+
+Search and filtering are not currently listed among Jua Kali Connect's audited user actions. Since the downstream partner specifically identified search as a required capability, the Jua Kali Connect API audit should include searching artisan/service data as an additional action/resource capability.
+
+
+Gaps
+Gap 1: Search/filtering was requested by ArtistsVenue Funds but was not included in the original Week 1 action audit.
+
+Gap 2: Updating existing bookings was requested by ArtistsVenue Funds but was not explicitly included in the original Week 1 action audit.
+
+
+Reflection
+This exercise helped us understand what our API consumers actually need and what we need from the API we consume. We identified authentication, search, and booking as key requirements for Team 4, while also identifying gaps in our original audit. We also learned that we need to confirm StudySync's actual API availability and access before planning our integration.s
