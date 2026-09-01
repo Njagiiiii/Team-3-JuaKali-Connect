@@ -1,5 +1,12 @@
 #Jua Kali Connect API — Endpoint List
 
+Team 3
+
+Rose Njagi- 221363
+Patience Naliaka Ovamba- 222191
+Ryan Amani- 221741
+Sean Ochieng
+
 | Method | Path                                        | Purpose                                                      | Maps to Need                                                                                                                                      |
 | ------ | ------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | POST   | `/sessions`                                 | Create an authenticated session for a user.                  | ArtistsVenue Funds needs to authenticate users in order to allow users to securely access Jua Kali Connect services.                              |
