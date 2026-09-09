@@ -1,0 +1,200 @@
+Team Members
+Patience Naliaka 222191
+Rose Njagi 221363
+Rhyan Amani 221741
+Sean Ochieng 220261
+
+openapi: 3.0.0
+info:
+  title: Jua Kali Connect API
+  version: 1.0.0
+paths:
+  /bookings:
+    post:
+      summary: Create a new booking for a selected artisan and service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - artisan_name
+                - service
+              properties:
+                artisan_name:
+                  type: string
+                  example: "Sean"
+                service:
+                  type: string
+                  example: "Plumbing"
+                status:
+                  type: string
+                  enum: [pending, confirmed, completed]
+                  example: "pending"
+      responses:
+        '201':
+          description: Booking created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 4
+                  artisan_name:
+                    type: string
+                    example: "Sean"
+                  service:
+                    type: string
+                    example: "Plumbing"
+                  status:
+                    type: string
+                    example: "pending"
+        '400':
+          description: Invalid request — missing required fields
+  /sessions:
+    post:
+      summary: Create an authenticated session for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "seanochieng@gmail.com"
+                password:
+                  type: string
+                  format: password
+                  example: "correcthorsebatterystaple"
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  userId:
+                    type: integer
+                    example: 12
+        '401':
+          description: Invalid email or password
+  /artisans:
+    get:
+      summary: Return artisans matching the search term and service filter
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "seanochieng"
+        - name: service
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "Plumbing"
+      responses:
+        '200':
+          description: A list of matching artisans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 3
+                    name:
+                      type: string
+                      example: "Sean"
+                    service:
+                      type: string
+                      example: "Plumbing"
+                    rating:
+                      type: number
+                      example: 4.8
+  /artisans/{id}:
+    get:
+      summary: Return the details of a specific artisan
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 3
+      responses:
+        '200':
+          description: Artisan details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 3
+                  name:
+                    type: string
+                    example: "Sean"
+                  service:
+                    type: string
+                    example: "Plumbing"
+                  phone:
+                    type: string
+                    example: "+254712345678"
+                  rating:
+                    type: number
+                    example: 4.8
+        '404':
+          description: Artisan not found
+  /bookings/{id}:
+    patch:
+      summary: Update an existing booking's information or status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [pending, confirmed, completed]
+                  example: "completed"
+      responses:
+        '200':
+          description: Booking updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Booking updated"
+        '404':
+          description: Booking not found
