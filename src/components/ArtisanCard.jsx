@@ -1,27 +1,42 @@
 import { Link } from "react-router-dom";
 
 function ArtisanCard({ artisan }) {
-  return (
-    <div className="artisan-card">
-      <img src={artisan.image} alt={artisan.name} />
 
-      <h2>{artisan.name}</h2>
+    return (
 
-      <h4>{artisan.skill}</h4>
+        <div className="artisan-card">
 
-      <p>{artisan.county}</p>
+            <img
+                src={artisan.image}
+                alt={artisan.name}
+            />
 
-      <p>⭐ {artisan.rating}</p>
+            <h2>{artisan.name}</h2>
 
-      <Link to={`/profile/${artisan.id}`} className="btn-primary">
-        View Profile
-      </Link>
+            <h4>{artisan.skill}</h4>
 
-      <Link to={`/booking/${artisan.id}`} className="btn-primary">
-        Book Now
-      </Link>
-    </div>
-  );
+            <p>{artisan.county}</p>
+
+            <p>⭐ {artisan.rating}</p>
+
+            <Link
+                to={`/profile/${artisan.id}`}
+                className="btn-primary"
+            >
+                View Profile
+            </Link>
+
+            <Link
+                to={`/booking/${artisan.id}`}
+                className="btn-primary"
+            >
+                Book Now
+            </Link>
+
+        </div>
+
+    );
+
 }
 
 export default ArtisanCard;

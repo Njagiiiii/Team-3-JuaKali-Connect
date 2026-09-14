@@ -14,9 +14,11 @@ function Artisans() {
       artisan.name.toLowerCase().includes(search.toLowerCase()) ||
       artisan.skill.toLowerCase().includes(search.toLowerCase());
 
-    const matchesCounty = county === "All" || artisan.county === county;
+    const matchesCounty =
+      county === "All" || artisan.county === county;
 
-    const matchesRating = rating === "All" || artisan.rating >= Number(rating);
+    const matchesRating =
+      rating === "All" || artisan.rating >= Number(rating);
 
     return matchesSearch && matchesCounty && matchesRating;
   });
@@ -26,6 +28,7 @@ function Artisans() {
       <Navbar />
 
       <section className="container">
+
         <h1>Find Skilled Artisans</h1>
 
         <input
@@ -35,7 +38,10 @@ function Artisans() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select value={county} onChange={(e) => setCounty(e.target.value)}>
+        <select
+          value={county}
+          onChange={(e) => setCounty(e.target.value)}
+        >
           <option>All</option>
           <option>Nairobi</option>
           <option>Kiambu</option>
@@ -43,7 +49,10 @@ function Artisans() {
           <option>Mombasa</option>
         </select>
 
-        <select value={rating} onChange={(e) => setRating(e.target.value)}>
+        <select
+          value={rating}
+          onChange={(e) => setRating(e.target.value)}
+        >
           <option>All</option>
           <option value="4">4★ & Above</option>
           <option value="4.5">4.5★ & Above</option>
@@ -52,9 +61,13 @@ function Artisans() {
 
         <div className="artisan-grid">
           {filtered.map((artisan) => (
-            <ArtisanCard key={artisan.id} artisan={artisan} />
+            <ArtisanCard
+              key={artisan.id}
+              artisan={artisan}
+            />
           ))}
         </div>
+
       </section>
 
       <Footer />
