@@ -24,29 +24,67 @@ function RegisterArtisan() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!formData.fullName || !formData.specialty || !formData.location || !formData.experience) {
+    if (
+      !formData.fullName ||
+      !formData.phone ||
+      !formData.specialty ||
+      !formData.location ||
+      !formData.experience ||
+      !formData.bio
+    ) {
       setError("Please fill out all mandatory artisan details.");
       return;
     }
+
     if (!formData.agreeTerms) {
       setError("You must agree to the Terms.");
       return;
     }
 
-    console.log("Artisan applied successfully!", formData);
-    navigate("/");
-  };
+    try {
+      const response = await fetch("http://localhost:5000/api/artisans", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          full_name: formData.fullName,
+          phone: formData.phone,
+          location: formData.location,
+          years_experience: Number(formData.experience),
+          bio: formData.bio,
+          specialty: formData.specialty,
+          agreed_to_code_of_conduct: formData.agreeTerms,
+        }),
+      });
 
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to register artisan");
+      }
+
+      console.log("Artisan saved to database:", data);
+
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError("Unable to register artisan. Please try again.");
+    }
+  };
   return (
     <div className="auth-page-container">
       <div className="auth-card broad">
         <div className="auth-header">
           <h2>Grow Your Business with Us</h2>
-          <p>Showcase your skills and connect with paying clients throughout Kenya.</p>
+          <p>
+            Showcase your skills and connect with paying clients throughout
+            Kenya.
+          </p>
         </div>
 
         {error && <div className="auth-error-message">{error}</div>}
@@ -156,7 +194,9 @@ function RegisterArtisan() {
         </form>
 
         <div className="auth-footer">
-          <p>Already registered? <Link to="/login">Log In</Link></p>
+          <p>
+            Already registered? <Link to="/login">Log In</Link>
+          </p>
         </div>
       </div>
     </div>
