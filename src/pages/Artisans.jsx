@@ -33,25 +33,23 @@ function Artisans() {
   }, []);
 
   const filtered = artisans.filter((artisan) => {
-    const artisanName = (
-      artisan.full_name || artisan.name || ""
-    ).toLowerCase();
+    const artisanName = (artisan.full_name || artisan.name || "").toLowerCase();
 
     const artisanSpecialty = (
-      artisan.specialty || artisan.skill || ""
+      artisan.specialty ||
+      artisan.skill ||
+      ""
     ).toLowerCase();
 
     const matchesSearch =
       artisanName.includes(search.toLowerCase()) ||
       artisanSpecialty.includes(search.toLowerCase());
 
-    const matchesCounty =
-      county === "All" || artisan.location === county;
+    const matchesCounty = county === "All" || artisan.location === county;
 
     const artisanRating = Number(artisan.rating || 0);
 
-    const matchesRating =
-      rating === "All" || artisanRating >= Number(rating);
+    const matchesRating = rating === "All" || artisanRating >= Number(rating);
 
     return matchesSearch && matchesCounty && matchesRating;
   });
@@ -70,10 +68,7 @@ function Artisans() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <select
-          value={county}
-          onChange={(e) => setCounty(e.target.value)}
-        >
+        <select value={county} onChange={(e) => setCounty(e.target.value)}>
           <option>All</option>
           <option>Nairobi</option>
           <option>Kiambu</option>
@@ -81,10 +76,7 @@ function Artisans() {
           <option>Mombasa</option>
         </select>
 
-        <select
-          value={rating}
-          onChange={(e) => setRating(e.target.value)}
-        >
+        <select value={rating} onChange={(e) => setRating(e.target.value)}>
           <option>All</option>
           <option value="4">4★ & Above</option>
           <option value="4.5">4.5★ & Above</option>
@@ -98,10 +90,7 @@ function Artisans() {
         {!loading && !error && (
           <div className="artisan-grid">
             {filtered.map((artisan) => (
-              <ArtisanCard
-                key={artisan.id}
-                artisan={artisan}
-              />
+              <ArtisanCard key={artisan.id} artisan={artisan} />
             ))}
           </div>
         )}
