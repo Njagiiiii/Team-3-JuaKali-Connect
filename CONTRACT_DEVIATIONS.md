@@ -32,3 +32,9 @@ A `404 Not Found` response was added to `GET /artisans` for cases where no match
 The `rating` field was retained in the OpenAPI contract. The database initially did not contain a rating column, so the database was updated to support the existing contract field. This was an implementation/database change rather than a change to the API contract.
 
 The final GET responses were implemented and verified against the corrected OpenAPI contract.
+
+Week 6 — Write Endpoints
+
+No changes were made to the OpenAPI contract during the Week 6 implementation and testing of the write endpoints.
+
+The existing POST /bookings and PATCH /bookings/{id} contract definitions were used to implement request validation, successful write responses and error responses.

@@ -4,10 +4,9 @@ const router = express.Router();
 
 const db = require("../db");
 
-// ========================================
 // GET all artisans
 // GET /api/artisans
-// ========================================
+
 router.get("/", async (req, res) => {
   try {
     const { search, location } = req.query;
