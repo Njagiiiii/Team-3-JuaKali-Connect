@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const bookingRoutes = require("./routes/bookings");
 const artisanRoutes = require("./routes/artisans");
+const sessionRoutes = require("./routes/sessions");
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/artisans", artisanRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
