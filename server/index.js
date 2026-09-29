@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
+const path = require("path");
 
 require("dotenv").config();
 
@@ -13,7 +14,9 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
-const swaggerDocument = YAML.load("../public/openapi.yaml");
+const swaggerDocument = YAML.load(
+  path.join(__dirname, "..", "public", "openapi.yaml"),
+);
 console.log("Swagger servers:", swaggerDocument.servers);
 
 app.use(cors());
