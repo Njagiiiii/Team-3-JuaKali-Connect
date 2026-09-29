@@ -29,6 +29,10 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/artisans", artisanRoutes);
 app.use("/api/sessions", sessionRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
