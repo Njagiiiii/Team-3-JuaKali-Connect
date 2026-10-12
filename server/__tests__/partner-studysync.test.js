@@ -1,4 +1,4 @@
-
+const crypto = require("crypto");
 const request = require("supertest");
 
 const partnerApiUrl = process.env.PARTNER_API_URL;
@@ -67,7 +67,8 @@ describe("StudySync Partner API - Members", () => {
           id: `partner-test-${Date.now()}`,
           name: "Test Member",
           initials: "TM",
-          reliability: 101
+          reliability: 101,
+          group_id: null
         });
 
       expect(res.status).toBe(400);
@@ -76,7 +77,7 @@ describe("StudySync Partner API - Members", () => {
     });
 
     it("creates a member and returns the documented fields", async () => {
-      const testMemberId = `partner-test-${Date.now()}`;
+      const testMemberId = `jest-member-${crypto.randomUUID()}`;
 
       try {
         const res = await partnerApi
@@ -89,6 +90,11 @@ describe("StudySync Partner API - Members", () => {
             group_id: null
           });
 
+console.log("MEMBER CREATE DEBUG:", {
+  status: res.status,
+  body: res.body,
+  idSent: testMemberId
+});
         expect(res.status).toBe(201);
         expect(res.body).toEqual(
           expect.objectContaining({
@@ -107,19 +113,17 @@ describe("StudySync Partner API - Members", () => {
   });
 });
 
-
 describe("PUT /api/members/:id", () => {
   it("updates an existing member successfully", async () => {
-    const memberId = `partner-put-${Date.now()}`;
-
-    
+    const memberId = `partner-put-${crypto.randomUUID()}`;
     const createRes = await partnerApi
       .post("/api/members")
       .send({
         id: memberId,
         name: "Original Test Member",
         initials: "OTM",
-        reliability: 60
+        reliability: 60,
+        group_id: null
       });
 
     expect(createRes.status).toBe(201);
@@ -176,7 +180,8 @@ describe("PUT /api/members/:id", () => {
 
 describe("DELETE /api/members/:id", () => {
   it("deletes an existing member successfully", async () => {
-    const memberId = `partner-delete-${Date.now()}`;
+    const memberId =
+      `partner-delete-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
     const createRes = await partnerApi
       .post("/api/members")
@@ -184,7 +189,8 @@ describe("DELETE /api/members/:id", () => {
         id: memberId,
         name: "Member To Delete",
         initials: "MTD",
-        reliability: 50
+        reliability: 50,
+        group_id: null
       });
 
     expect(createRes.status).toBe(201);
@@ -212,10 +218,8 @@ describe("DELETE /api/members/:id", () => {
   });
 });
 
-
 describe("GET /users/:userId/reliability-score", () => {
   it("returns the reliability score for an existing user", async () => {
-    
     const membersRes = await partnerApi.get("/api/members");
 
     expect(membersRes.status).toBe(200);
@@ -261,7 +265,6 @@ describe("GET /users/:userId/reliability-score", () => {
     expect(typeof res.body.error).toBe("string");
   });
 });
-
 
 describe("GET /api/tasks", () => {
   it("returns 200 and an array of tasks", async () => {
@@ -318,9 +321,18 @@ describe("GET /api/tasks", () => {
   });
 
   it("accepts an assignee filter", async () => {
+    const membersRes = await partnerApi.get("/api/members");
+
+    expect(membersRes.status).toBe(200);
+    expect(Array.isArray(membersRes.body)).toBe(true);
+
+    const assignee = membersRes.body.length > 0
+      ? membersRes.body[0].id
+      : "test-member";
+
     const res = await partnerApi
       .get("/api/tasks")
-      .query({ assignee: "test-member" });
+      .query({ assignee });
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -337,33 +349,48 @@ describe("GET /api/tasks", () => {
   });
 });
 
-
 describe("POST /api/tasks", () => {
   it("creates a task successfully", async () => {
-    const taskId = `partner-test-${Date.now()}`;
+    const membersRes = await partnerApi.get("/api/members");
 
-    const res = await partnerApi
-      .post("/api/tasks")
-      .send({
-        id: taskId,
-        title: "API Test Task",
-        assigned_to: "test-member",
-        deadline: "2030-12-31T10:00:00Z",
-        status: "pending"
-      });
 
-    expect(res.status).toBe(201);
-    expect(res.body).toEqual(
-      expect.objectContaining({
-        id: taskId,
-        title: "API Test Task",
-        assigned_to: "test-member",
-        status: "pending",
-        deadline: expect.any(String)
-      })
-    );
 
-    expect(Number.isNaN(Date.parse(res.body.deadline))).toBe(false);
+    expect(membersRes.status).toBe(200);
+    expect(Array.isArray(membersRes.body)).toBe(true);
+    expect(membersRes.body.length).toBeGreaterThan(0);
+
+    const taskId =
+      `partner-test-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const memberId = membersRes.body[0].id;
+
+    try {
+      const res = await partnerApi
+        .post("/api/tasks")
+        .send({
+          id: taskId,
+          title: "API Test Task",
+          assigned_to: memberId,
+          deadline: "2030-12-31T10:00:00Z",
+          status: "pending"
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          id: taskId,
+          title: "API Test Task",
+          assigned_to: memberId,
+          status: "pending",
+          deadline: expect.any(String)
+        })
+      );
+
+      expect(Number.isNaN(Date.parse(res.body.deadline))).toBe(false);
+    } finally {
+      await partnerApi
+        .delete(`/api/tasks/${encodeURIComponent(taskId)}`)
+        .catch(() => {});
+    }
   });
 
   it("rejects a request with missing required fields", async () => {
@@ -384,7 +411,7 @@ describe("POST /api/tasks", () => {
       const res = await partnerApi
         .post("/api/tasks")
         .send({
-          id: `invalid-task-${Date.now()}`,
+          id: `invalid-task-${Date.now()}-${Math.random().toString(16).slice(2)}`,
           title: "Invalid Status Task",
           assigned_to: "test-member",
           deadline: "2030-12-31T10:00:00Z",
@@ -414,19 +441,32 @@ describe("POST /api/tasks", () => {
   });
 
   it("uses pending as the default status when status is omitted", async () => {
-    const taskId = `default-status-${Date.now()}`;
+    const membersRes = await partnerApi.get("/api/members");
 
-    const res = await partnerApi
-      .post("/api/tasks")
-      .send({
-        id: taskId,
-        title: "Default Status Test",
-        assigned_to: "test-member",
-        deadline: "2030-12-31T10:00:00Z"
-      });
+    expect(membersRes.status).toBe(200);
+    expect(Array.isArray(membersRes.body)).toBe(true);
+    expect(membersRes.body.length).toBeGreaterThan(0);
 
-    expect(res.status).toBe(201);
-    expect(res.body.status).toBe("pending");
+    const taskId =
+      `default-status-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+    try {
+      const res = await partnerApi
+        .post("/api/tasks")
+        .send({
+          id: taskId,
+          title: "Default Status Test",
+          assigned_to: membersRes.body[0].id,
+          deadline: "2030-12-31T10:00:00Z"
+        });
+
+      expect(res.status).toBe(201);
+      expect(res.body.status).toBe("pending");
+    } finally {
+      await partnerApi
+        .delete(`/api/tasks/${encodeURIComponent(taskId)}`)
+        .catch(() => {});
+    }
   });
 });
 
@@ -442,7 +482,8 @@ describe("PATCH /api/tasks/:id", () => {
       return;
     }
 
-    const taskId = `partner-patch-${Date.now()}`;
+    const taskId =
+      `partner-patch-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const memberId = membersRes.body[0].id;
 
     const createRes = await partnerApi
@@ -530,7 +571,6 @@ describe("PATCH /api/tasks/:id", () => {
   });
 });
 
-
 describe("DELETE /api/tasks/:id", () => {
   it("deletes an existing task successfully", async () => {
     const membersRes = await partnerApi.get("/api/members");
@@ -539,7 +579,8 @@ describe("DELETE /api/tasks/:id", () => {
     expect(Array.isArray(membersRes.body)).toBe(true);
     expect(membersRes.body.length).toBeGreaterThan(0);
 
-    const taskId = `partner-delete-${Date.now()}`;
+    const taskId =
+      `partner-delete-${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const memberId = membersRes.body[0].id;
 
     const createRes = await partnerApi
@@ -579,7 +620,6 @@ describe("DELETE /api/tasks/:id", () => {
     expect(typeof res.body.error).toBe("string");
   });
 });
-
 
 describe("GET /calendar-events", () => {
   it("returns 200 and an array of calendar events for a valid date range", async () => {
@@ -659,7 +699,6 @@ describe("GET /calendar-events", () => {
   });
 });
 
-
 describe("GET /api/deadlines", () => {
   it("returns 200 and an array of deadlines", async () => {
     const res = await partnerApi.get("/api/deadlines");
@@ -703,7 +742,6 @@ describe("GET /api/deadlines", () => {
     }
   });
 });
-
 
 describe("GET /users/:userId/activity", () => {
   it("returns 200 and an array of activity records for an existing user", async () => {
@@ -750,7 +788,6 @@ describe("GET /users/:userId/activity", () => {
     expect(typeof res.body.error).toBe("string");
   });
 });
-
 
 describe("GET /api/activity", () => {
   it("returns 200 and an array of activity logs", async () => {
@@ -833,7 +870,7 @@ describe("GET /api/flashcards", () => {
           id: expect.any(String),
           title: expect.any(String),
           owner_id: expect.any(String),
-          cards: expect.any(Array),
+          cards: expect.any(Array)
         })
       );
 
@@ -843,7 +880,7 @@ describe("GET /api/flashcards", () => {
             id: expect.any(String),
             deck_id: expect.any(String),
             question: expect.any(String),
-            answer: expect.any(String),
+            answer: expect.any(String)
           })
         );
       }
