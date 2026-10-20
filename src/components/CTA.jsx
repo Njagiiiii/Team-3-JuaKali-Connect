@@ -15,6 +15,7 @@ function CTA() {
         Get Started
       </Link>
 
+      <div id="swagger"></div>
     </section>
   );
 }

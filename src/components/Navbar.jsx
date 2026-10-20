@@ -53,7 +53,16 @@ function Navbar() {
                         </Link>
 
                     </li>
+ 
+                    <li>
 
+                        <Link to="/docs">
+
+                            API Docs
+
+                        </Link>
+
+                    </li>
                     <li>
 
                         <Link to="/artisans">

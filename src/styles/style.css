@@ -1232,3 +1232,12 @@ body.dark .favorite-btn:hover {
   color: #f28c28;
   text-decoration: underline;
 }
+.swagger-container {
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+.swagger-container h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}

@@ -16,6 +16,7 @@ import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import BookingsTest from "./components/BookingsTest";
+import ReDocPage from "./pages/ReDocPage";
 
 function App() {
   return (
@@ -47,8 +48,12 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />
 
       <Route path="/admin" element={<Admin />} />
+      
       <Route path="/bookings-test" element={<BookingsTest />} />
+
+       <Route path="/docs" element={<ReDocPage />} />
     </Routes>
+    
   );
 }
 
