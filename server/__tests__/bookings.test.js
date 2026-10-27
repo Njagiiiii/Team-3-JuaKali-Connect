@@ -4,7 +4,7 @@ const app = require("../index");
 describe("POST /api/bookings", () => {
   it("creates a booking with valid data", async () => {
     const res = await request(app)
-      .post("/api/bookings")
+      .post("/api/bookings").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         artisan_name: "Test Artisan",
         service: "Plumbing",
@@ -21,7 +21,7 @@ describe("POST /api/bookings", () => {
 
   it("rejects a booking when artisan_name is missing", async () => {
     const res = await request(app)
-      .post("/api/bookings")
+      .post("/api/bookings").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         service: "Plumbing",
         status: "pending",
@@ -33,7 +33,7 @@ describe("POST /api/bookings", () => {
 
   it("rejects a booking when service is missing", async () => {
     const res = await request(app)
-      .post("/api/bookings")
+      .post("/api/bookings").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         artisan_name: "Test Artisan",
         status: "pending",
@@ -45,7 +45,7 @@ describe("POST /api/bookings", () => {
 
   it("rejects a booking when artisan_name is not a string", async () => {
     const res = await request(app)
-      .post("/api/bookings")
+      .post("/api/bookings").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         artisan_name: 123,
         service: "Plumbing",
@@ -58,7 +58,7 @@ describe("POST /api/bookings", () => {
 
   it("rejects a booking with an invalid status", async () => {
     const res = await request(app)
-      .post("/api/bookings")
+      .post("/api/bookings").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         artisan_name: "Test Artisan",
         service: "Plumbing",

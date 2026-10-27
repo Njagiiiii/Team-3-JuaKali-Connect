@@ -36,6 +36,8 @@ paths:
                   example: "pending"
 
       responses:
+        "429":
+          description: Rate limit exceeded; retry later (see Retry-After header)
         "201":
           description: Booking created successfully
           content:
@@ -82,6 +84,8 @@ paths:
                   example: "correcthorsebatterystaple"
 
       responses:
+        "429":
+          description: Rate limit exceeded; retry later (see Retry-After header)
         "201":
           description: Session created successfully
           content:
@@ -121,6 +125,8 @@ paths:
             example: "Nairobi"
 
       responses:
+        "429":
+          description: Rate limit exceeded; retry later (see Retry-After header)
         "200":
           description: A list of matching artisans
           content:
@@ -158,6 +164,8 @@ paths:
             example: 3
 
       responses:
+        "429":
+          description: Rate limit exceeded; retry later (see Retry-After header)
         "200":
           description: Artisan details
           content:
@@ -211,6 +219,8 @@ paths:
                   example: "completed"
 
       responses:
+        "429":
+          description: Rate limit exceeded; retry later (see Retry-After header)
         "200":
           description: Booking updated successfully
           content:
@@ -227,3 +237,13 @@ paths:
 
         "404":
           description: Booking not found
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - ApiKeyAuth: []

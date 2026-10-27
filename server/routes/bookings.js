@@ -5,7 +5,9 @@ const db = require("../db");
 // GET all bookings
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM bookings");
+    const [rows] = await db.query(
+      "SELECT id, artisan_name, service, status FROM bookings",
+    );
     res.json(rows);
   } catch (err) {
     console.error(err);
@@ -92,7 +94,7 @@ router.patch("/:id", async (req, res) => {
     }
 
     // Check that the booking exists BEFORE updating
-    const [rows] = await db.query("SELECT * FROM bookings WHERE id = ?", [id]);
+    const [rows] = await db.query("SELECT id FROM bookings WHERE id = ?", [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({

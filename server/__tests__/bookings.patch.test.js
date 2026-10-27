@@ -5,7 +5,7 @@ describe("PATCH /api/bookings/:id", () => {
 
   it("updates a booking with valid data", async () => {
     const res = await request(app)
-      .patch("/api/bookings/1")
+      .patch("/api/bookings/1").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         status: "confirmed",
       });
@@ -16,7 +16,7 @@ describe("PATCH /api/bookings/:id", () => {
 
   it("rejects a booking update when status is missing", async () => {
     const res = await request(app)
-      .patch("/api/bookings/1")
+      .patch("/api/bookings/1").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({});
 
     expect(res.status).toBe(400);
@@ -25,7 +25,7 @@ describe("PATCH /api/bookings/:id", () => {
 
   it("rejects a booking update with an invalid status", async () => {
     const res = await request(app)
-      .patch("/api/bookings/1")
+      .patch("/api/bookings/1").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         status: "invalid",
       });
@@ -36,7 +36,7 @@ describe("PATCH /api/bookings/:id", () => {
 
   it("rejects an invalid booking ID", async () => {
     const res = await request(app)
-      .patch("/api/bookings/abc")
+      .patch("/api/bookings/abc").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         status: "confirmed",
       });
@@ -50,7 +50,7 @@ describe("PATCH /api/bookings/:id", () => {
 
   it("returns not found for a booking that does not exist", async () => {
     const res = await request(app)
-      .patch("/api/bookings/999999")
+      .patch("/api/bookings/999999").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         status: "confirmed",
       });

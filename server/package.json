@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-"scripts": {
-  "start": "node index.js",
-  "dev": "nodemon index.js",
-  "test": "jest"
-  
-},
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -17,12 +16,12 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.1",
     "mysql2": "^3.24.4"
-    
   },
   "devDependencies": {
-     "jest": "...",
-  "nodemon": "^3.1.14",
-  "supertest": "..."
+    "jest": "...",
+    "nodemon": "^3.1.14",
+    "supertest": "..."
   }
 }

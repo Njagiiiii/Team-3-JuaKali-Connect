@@ -3,14 +3,14 @@ const app = require("../index");
 
 describe("POST /api/sessions", () => {
   it("returns 400 when email and password are missing", async () => {
-    const res = await request(app).post("/api/sessions").send({});
+    const res = await request(app).post("/api/sessions").set("X-API-Key", process.env.TEAM_TEST_API_KEY).send({});
 
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("error", "Email and password are required");
   });
 
   it("returns 401 for an invalid email or password", async () => {
-    const res = await request(app).post("/api/sessions").send({
+    const res = await request(app).post("/api/sessions").set("X-API-Key", process.env.TEAM_TEST_API_KEY).send({
       email: "invalid@example.com",
       password: "wrongpassword",
     });
@@ -20,7 +20,7 @@ describe("POST /api/sessions", () => {
   });
 
   it("returns 401 when the password is incorrect", async () => {
-    const res = await request(app).post("/api/sessions").send({
+    const res = await request(app).post("/api/sessions").set("X-API-Key", process.env.TEAM_TEST_API_KEY).send({
       email: "johndoe@gmail.com",
       password: "wrongpassword",
     });
@@ -30,7 +30,7 @@ describe("POST /api/sessions", () => {
   });
 
   it("authenticates a user with valid credentials", async () => {
-    const res = await request(app).post("/api/sessions").send({
+    const res = await request(app).post("/api/sessions").set("X-API-Key", process.env.TEAM_TEST_API_KEY).send({
       email: "johndoe@gmail.com",
       password: "12345678",
     });

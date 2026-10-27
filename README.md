@@ -7,20 +7,42 @@ Jua Kali Connect is a REST API for a platform that connects customers with skill
 
 ## 2. Authentication
 
-The current implementation does not use Bearer tokens. The `POST /api/sessions` endpoint accepts an email and password and checks the credentials against the users table.
+### Week 9 API-key authentication
 
-Authentication is not yet token-based. For Week 8, callers do not need an `Authorization: Bearer` header unless the implementation is changed. Token-based authentication is planned for Week 9.
+Every API request requires an `X-API-Key` header.
 
-Example login request:
+- `TEAM_TEST_API_KEY`: Team 3 internal testing.
+- `DOWNSTREAM_API_KEY`: Group 4 integration.
+
+Store real keys in `server/.env`, never in Git.
+
+Example request:
 
 ```powershell
-curl.exe -i -X POST "http://localhost:5000/api/sessions" -H "Content-Type: application/json" -d "{\"email\":\"user@example.com\",\"password\":\"your_password\"}"
+curl.exe -i -H "X-API-Key: YOUR_ASSIGNED_KEY" http://localhost:5000/api/artisans
 ```
 
-A successful login is expected to return HTTP `201` with a message and user information. Invalid credentials return HTTP `401`.
+Missing or incorrect keys return HTTP 401:
 
-The exact response must be verified against a running API and valid database record. Do not use the example credentials as real credentials.
+```json
+{"message":"Missing or invalid API key"}
+```
 
+### Rate limiting
+
+Each authenticated consumer is allowed 100 requests per minute by default.
+Exceeding this limit returns HTTP 429 with a `Retry-After` header:
+
+```json
+{"message":"Too many requests. Please try again later."}
+```
+
+Set `RATE_LIMIT_MAX=100` in `server/.env`.
+
+### Sessions
+
+`POST /api/sessions` also requires an API key. It does not currently issue a Bearer token.
+Password hashing and detailed login testing are outstanding security tasks.
 ## 3. API Endpoints
 
 The local API base URL is:
@@ -212,8 +234,9 @@ Common HTTP status codes:
 | `200` | Request completed successfully |
 | `201` | Resource created or login accepted |
 | `400` | Invalid or incomplete request |
-| `401` | Invalid login credentials |
+| `401` | Missing/invalid API key or invalid login credentials |
 | `404` | Resource or matching results not found |
+| `429` | Rate limit exceeded; wait for Retry-After |
 | `500` | Server or database error |
 
 Callers should check the HTTP status code as well as the response body to determine whether a request succeeded.
@@ -314,3 +337,9 @@ The current OpenAPI specification documents these five operations:
 - `GET /artisans/{id}`
 
 
+
+## Week 9 Environment Variables
+
+Add `TEAM_TEST_API_KEY`, `DOWNSTREAM_API_KEY`, and `RATE_LIMIT_MAX=100` to `server/.env`.
+See `server/.env.example` for placeholders and `SECURITY_AUDIT.md` for the security review.
+Existing request examples above must include the `X-API-Key` header when executed.

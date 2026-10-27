@@ -5,7 +5,7 @@ describe("GET /api/artisans", () => {
 
   it("returns artisans successfully", async () => {
     const res = await request(app)
-      .get("/api/artisans");
+      .get("/api/artisans").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -20,7 +20,7 @@ describe("GET /api/artisans", () => {
 
   it("returns not found when no artisans match the search", async () => {
     const res = await request(app)
-      .get("/api/artisans")
+      .get("/api/artisans").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({
         search: "DefinitelyNotAnArtisanThatExists999999"
       });
@@ -34,7 +34,7 @@ describe("GET /api/artisans", () => {
 
   it("handles the location query parameter", async () => {
     const res = await request(app)
-      .get("/api/artisans")
+      .get("/api/artisans").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({
         location: "Nairobi"
       });
@@ -54,7 +54,7 @@ describe("GET /api/artisans/:id", () => {
 
   it("returns an artisan successfully", async () => {
     const res = await request(app)
-      .get("/api/artisans/1");
+      .get("/api/artisans/1").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
 
@@ -67,7 +67,7 @@ describe("GET /api/artisans/:id", () => {
 
   it("returns not found for an artisan that does not exist", async () => {
     const res = await request(app)
-      .get("/api/artisans/999999");
+      .get("/api/artisans/999999").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty(
@@ -78,7 +78,7 @@ describe("GET /api/artisans/:id", () => {
 
   it("handles an invalid artisan ID", async () => {
     const res = await request(app)
-      .get("/api/artisans/abc");
+      .get("/api/artisans/abc").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty("message");

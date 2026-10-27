@@ -18,14 +18,14 @@ beforeAll(() => {
 describe("StudySync Partner API - Members", () => {
   describe("GET /api/members", () => {
     it("returns a 200 status and an array of members", async () => {
-      const res = await partnerApi.get("/api/members");
+      const res = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
     });
 
     it("returns members with the required contract fields", async () => {
-      const res = await partnerApi.get("/api/members");
+      const res = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
@@ -52,7 +52,7 @@ describe("StudySync Partner API - Members", () => {
   describe("POST /api/members", () => {
     it("rejects a request with missing required fields", async () => {
       const res = await partnerApi
-        .post("/api/members")
+        .post("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .send({});
 
       expect(res.status).toBe(400);
@@ -62,7 +62,7 @@ describe("StudySync Partner API - Members", () => {
 
     it("rejects a reliability value greater than 100", async () => {
       const res = await partnerApi
-        .post("/api/members")
+        .post("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .send({
           id: `partner-test-${Date.now()}`,
           name: "Test Member",
@@ -81,7 +81,7 @@ describe("StudySync Partner API - Members", () => {
 
       try {
         const res = await partnerApi
-          .post("/api/members")
+          .post("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
           .send({
             id: testMemberId,
             name: "API Test Member",
@@ -106,7 +106,7 @@ console.log("MEMBER CREATE DEBUG:", {
         );
       } finally {
         await partnerApi
-          .delete(`/api/members/${encodeURIComponent(testMemberId)}`)
+          .delete(`/api/members/${encodeURIComponent(testMemberId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
           .catch(() => {});
       }
     });
@@ -117,7 +117,7 @@ describe("PUT /api/members/:id", () => {
   it("updates an existing member successfully", async () => {
     const memberId = `partner-put-${crypto.randomUUID()}`;
     const createRes = await partnerApi
-      .post("/api/members")
+      .post("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         id: memberId,
         name: "Original Test Member",
@@ -130,7 +130,7 @@ describe("PUT /api/members/:id", () => {
 
     try {
       const res = await partnerApi
-        .put(`/api/members/${encodeURIComponent(memberId)}`)
+        .put(`/api/members/${encodeURIComponent(memberId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .send({
           name: "Updated Test Member",
           initials: "UTM",
@@ -148,14 +148,14 @@ describe("PUT /api/members/:id", () => {
       );
     } finally {
       await partnerApi
-        .delete(`/api/members/${encodeURIComponent(memberId)}`)
+        .delete(`/api/members/${encodeURIComponent(memberId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .catch(() => {});
     }
   });
 
   it("returns 400 when required update fields are missing", async () => {
     const res = await partnerApi
-      .put("/api/members/nonexistent-test-member")
+      .put("/api/members/nonexistent-test-member").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         reliability: 80
       });
@@ -167,7 +167,7 @@ describe("PUT /api/members/:id", () => {
 
   it("returns 404 when the member does not exist", async () => {
     const res = await partnerApi
-      .put(`/api/members/nonexistent-${Date.now()}`)
+      .put(`/api/members/nonexistent-${Date.now()}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         name: "Updated Member",
         initials: "UM"
@@ -184,7 +184,7 @@ describe("DELETE /api/members/:id", () => {
       `partner-delete-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
     const createRes = await partnerApi
-      .post("/api/members")
+      .post("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         id: memberId,
         name: "Member To Delete",
@@ -196,12 +196,12 @@ describe("DELETE /api/members/:id", () => {
     expect(createRes.status).toBe(201);
 
     const deleteRes = await partnerApi
-      .delete(`/api/members/${encodeURIComponent(memberId)}`);
+      .delete(`/api/members/${encodeURIComponent(memberId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(deleteRes.status).toBe(204);
     expect(deleteRes.text).toBe("");
 
-    const getRes = await partnerApi.get("/api/members");
+    const getRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(getRes.status).toBe(200);
     expect(
@@ -211,7 +211,7 @@ describe("DELETE /api/members/:id", () => {
 
   it("returns 404 when deleting a member that does not exist", async () => {
     const res = await partnerApi
-      .delete(`/api/members/nonexistent-${Date.now()}`);
+      .delete(`/api/members/nonexistent-${Date.now()}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty("error");
@@ -220,7 +220,7 @@ describe("DELETE /api/members/:id", () => {
 
 describe("GET /users/:userId/reliability-score", () => {
   it("returns the reliability score for an existing user", async () => {
-    const membersRes = await partnerApi.get("/api/members");
+    const membersRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(membersRes.status).toBe(200);
     expect(Array.isArray(membersRes.body)).toBe(true);
@@ -268,14 +268,14 @@ describe("GET /users/:userId/reliability-score", () => {
 
 describe("GET /api/tasks", () => {
   it("returns 200 and an array of tasks", async () => {
-    const res = await partnerApi.get("/api/tasks");
+    const res = await partnerApi.get("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
   });
 
   it("returns tasks with the required contract fields", async () => {
-    const res = await partnerApi.get("/api/tasks");
+    const res = await partnerApi.get("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -299,7 +299,7 @@ describe("GET /api/tasks", () => {
     "accepts the status filter: %s",
     async (status) => {
       const res = await partnerApi
-        .get("/api/tasks")
+        .get("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .query({ status });
 
       expect(res.status).toBe(200);
@@ -313,7 +313,7 @@ describe("GET /api/tasks", () => {
 
   it("accepts a groupId filter", async () => {
     const res = await partnerApi
-      .get("/api/tasks")
+      .get("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({ groupId: "test-group" });
 
     expect(res.status).toBe(200);
@@ -321,7 +321,7 @@ describe("GET /api/tasks", () => {
   });
 
   it("accepts an assignee filter", async () => {
-    const membersRes = await partnerApi.get("/api/members");
+    const membersRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(membersRes.status).toBe(200);
     expect(Array.isArray(membersRes.body)).toBe(true);
@@ -331,7 +331,7 @@ describe("GET /api/tasks", () => {
       : "test-member";
 
     const res = await partnerApi
-      .get("/api/tasks")
+      .get("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({ assignee });
 
     expect(res.status).toBe(200);
@@ -340,7 +340,7 @@ describe("GET /api/tasks", () => {
 
   it("rejects an invalid status filter", async () => {
     const res = await partnerApi
-      .get("/api/tasks")
+      .get("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({ status: "in-progress" });
 
     expect(res.status).toBe(400);
@@ -351,7 +351,7 @@ describe("GET /api/tasks", () => {
 
 describe("POST /api/tasks", () => {
   it("creates a task successfully", async () => {
-    const membersRes = await partnerApi.get("/api/members");
+    const membersRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
 
 
@@ -365,7 +365,7 @@ describe("POST /api/tasks", () => {
 
     try {
       const res = await partnerApi
-        .post("/api/tasks")
+        .post("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .send({
           id: taskId,
           title: "API Test Task",
@@ -388,14 +388,14 @@ describe("POST /api/tasks", () => {
       expect(Number.isNaN(Date.parse(res.body.deadline))).toBe(false);
     } finally {
       await partnerApi
-        .delete(`/api/tasks/${encodeURIComponent(taskId)}`)
+        .delete(`/api/tasks/${encodeURIComponent(taskId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .catch(() => {});
     }
   });
 
   it("rejects a request with missing required fields", async () => {
     const res = await partnerApi
-      .post("/api/tasks")
+      .post("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         title: "Incomplete Task"
       });
@@ -409,7 +409,7 @@ describe("POST /api/tasks", () => {
     "rejects an invalid task status: %s",
     async (status) => {
       const res = await partnerApi
-        .post("/api/tasks")
+        .post("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .send({
           id: `invalid-task-${Date.now()}-${Math.random().toString(16).slice(2)}`,
           title: "Invalid Status Task",
@@ -426,7 +426,7 @@ describe("POST /api/tasks", () => {
 
   it("rejects an invalid deadline format", async () => {
     const res = await partnerApi
-      .post("/api/tasks")
+      .post("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         id: `invalid-deadline-${Date.now()}`,
         title: "Invalid Deadline Task",
@@ -441,7 +441,7 @@ describe("POST /api/tasks", () => {
   });
 
   it("uses pending as the default status when status is omitted", async () => {
-    const membersRes = await partnerApi.get("/api/members");
+    const membersRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(membersRes.status).toBe(200);
     expect(Array.isArray(membersRes.body)).toBe(true);
@@ -452,7 +452,7 @@ describe("POST /api/tasks", () => {
 
     try {
       const res = await partnerApi
-        .post("/api/tasks")
+        .post("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .send({
           id: taskId,
           title: "Default Status Test",
@@ -464,7 +464,7 @@ describe("POST /api/tasks", () => {
       expect(res.body.status).toBe("pending");
     } finally {
       await partnerApi
-        .delete(`/api/tasks/${encodeURIComponent(taskId)}`)
+        .delete(`/api/tasks/${encodeURIComponent(taskId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .catch(() => {});
     }
   });
@@ -472,7 +472,7 @@ describe("POST /api/tasks", () => {
 
 describe("PATCH /api/tasks/:id", () => {
   it("updates an existing task successfully", async () => {
-    const membersRes = await partnerApi.get("/api/members");
+    const membersRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(membersRes.status).toBe(200);
     expect(Array.isArray(membersRes.body)).toBe(true);
@@ -487,7 +487,7 @@ describe("PATCH /api/tasks/:id", () => {
     const memberId = membersRes.body[0].id;
 
     const createRes = await partnerApi
-      .post("/api/tasks")
+      .post("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         id: taskId,
         title: "Original Test Task",
@@ -500,7 +500,7 @@ describe("PATCH /api/tasks/:id", () => {
 
     try {
       const res = await partnerApi
-        .patch(`/api/tasks/${encodeURIComponent(taskId)}`)
+        .patch(`/api/tasks/${encodeURIComponent(taskId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .send({
           status: "done"
         });
@@ -519,14 +519,14 @@ describe("PATCH /api/tasks/:id", () => {
       expect(Number.isNaN(Date.parse(res.body.deadline))).toBe(false);
     } finally {
       await partnerApi
-        .delete(`/api/tasks/${encodeURIComponent(taskId)}`)
+        .delete(`/api/tasks/${encodeURIComponent(taskId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
         .catch(() => {});
     }
   });
 
   it("returns 400 when no update fields are provided", async () => {
     const res = await partnerApi
-      .patch("/api/tasks/nonexistent-patch-test")
+      .patch("/api/tasks/nonexistent-patch-test").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({});
 
     expect(res.status).toBe(400);
@@ -536,7 +536,7 @@ describe("PATCH /api/tasks/:id", () => {
 
   it("returns 400 when an invalid status is provided", async () => {
     const res = await partnerApi
-      .patch("/api/tasks/nonexistent-patch-test")
+      .patch("/api/tasks/nonexistent-patch-test").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         status: "in-progress"
       });
@@ -548,7 +548,7 @@ describe("PATCH /api/tasks/:id", () => {
 
   it("returns 400 when an invalid deadline is provided", async () => {
     const res = await partnerApi
-      .patch("/api/tasks/nonexistent-patch-test")
+      .patch("/api/tasks/nonexistent-patch-test").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         deadline: "not-a-valid-date"
       });
@@ -560,7 +560,7 @@ describe("PATCH /api/tasks/:id", () => {
 
   it("returns 404 when the task does not exist", async () => {
     const res = await partnerApi
-      .patch(`/api/tasks/nonexistent-${Date.now()}`)
+      .patch(`/api/tasks/nonexistent-${Date.now()}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         status: "done"
       });
@@ -573,7 +573,7 @@ describe("PATCH /api/tasks/:id", () => {
 
 describe("DELETE /api/tasks/:id", () => {
   it("deletes an existing task successfully", async () => {
-    const membersRes = await partnerApi.get("/api/members");
+    const membersRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(membersRes.status).toBe(200);
     expect(Array.isArray(membersRes.body)).toBe(true);
@@ -584,7 +584,7 @@ describe("DELETE /api/tasks/:id", () => {
     const memberId = membersRes.body[0].id;
 
     const createRes = await partnerApi
-      .post("/api/tasks")
+      .post("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .send({
         id: taskId,
         title: "Task To Delete",
@@ -596,12 +596,12 @@ describe("DELETE /api/tasks/:id", () => {
     expect(createRes.status).toBe(201);
 
     const deleteRes = await partnerApi
-      .delete(`/api/tasks/${encodeURIComponent(taskId)}`);
+      .delete(`/api/tasks/${encodeURIComponent(taskId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(deleteRes.status).toBe(204);
     expect(deleteRes.text).toBe("");
 
-    const tasksRes = await partnerApi.get("/api/tasks");
+    const tasksRes = await partnerApi.get("/api/tasks").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(tasksRes.status).toBe(200);
     expect(
@@ -613,7 +613,7 @@ describe("DELETE /api/tasks/:id", () => {
     const taskId = `nonexistent-task-${Date.now()}`;
 
     const res = await partnerApi
-      .delete(`/api/tasks/${encodeURIComponent(taskId)}`);
+      .delete(`/api/tasks/${encodeURIComponent(taskId)}`).set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(404);
     expect(res.body).toHaveProperty("error");
@@ -624,7 +624,7 @@ describe("DELETE /api/tasks/:id", () => {
 describe("GET /calendar-events", () => {
   it("returns 200 and an array of calendar events for a valid date range", async () => {
     const res = await partnerApi
-      .get("/calendar-events")
+      .get("/calendar-events").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({
         from: "2026-09-01T00:00:00Z",
         to: "2026-09-30T23:59:59Z"
@@ -650,7 +650,7 @@ describe("GET /calendar-events", () => {
 
   it("returns 400 when the from parameter is missing", async () => {
     const res = await partnerApi
-      .get("/calendar-events")
+      .get("/calendar-events").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({
         to: "2026-09-30T23:59:59Z"
       });
@@ -662,7 +662,7 @@ describe("GET /calendar-events", () => {
 
   it("returns 400 when the to parameter is missing", async () => {
     const res = await partnerApi
-      .get("/calendar-events")
+      .get("/calendar-events").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({
         from: "2026-09-01T00:00:00Z"
       });
@@ -674,7 +674,7 @@ describe("GET /calendar-events", () => {
 
   it("returns 400 when the date range is invalid", async () => {
     const res = await partnerApi
-      .get("/calendar-events")
+      .get("/calendar-events").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({
         from: "not-a-date",
         to: "also-not-a-date"
@@ -687,7 +687,7 @@ describe("GET /calendar-events", () => {
 
   it("returns 400 when from is later than to", async () => {
     const res = await partnerApi
-      .get("/calendar-events")
+      .get("/calendar-events").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({
         from: "2026-09-30T23:59:59Z",
         to: "2026-09-01T00:00:00Z"
@@ -701,14 +701,14 @@ describe("GET /calendar-events", () => {
 
 describe("GET /api/deadlines", () => {
   it("returns 200 and an array of deadlines", async () => {
-    const res = await partnerApi.get("/api/deadlines");
+    const res = await partnerApi.get("/api/deadlines").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
   });
 
   it("returns deadlines with the required contract fields", async () => {
-    const res = await partnerApi.get("/api/deadlines");
+    const res = await partnerApi.get("/api/deadlines").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -729,7 +729,7 @@ describe("GET /api/deadlines", () => {
   });
 
   it("returns deadlines sorted in ascending order by date", async () => {
-    const res = await partnerApi.get("/api/deadlines");
+    const res = await partnerApi.get("/api/deadlines").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -745,7 +745,7 @@ describe("GET /api/deadlines", () => {
 
 describe("GET /users/:userId/activity", () => {
   it("returns 200 and an array of activity records for an existing user", async () => {
-    const membersRes = await partnerApi.get("/api/members");
+    const membersRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(membersRes.status).toBe(200);
     expect(Array.isArray(membersRes.body)).toBe(true);
@@ -791,14 +791,14 @@ describe("GET /users/:userId/activity", () => {
 
 describe("GET /api/activity", () => {
   it("returns 200 and an array of activity logs", async () => {
-    const res = await partnerApi.get("/api/activity");
+    const res = await partnerApi.get("/api/activity").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
   });
 
   it("returns activity logs with the required contract fields", async () => {
-    const res = await partnerApi.get("/api/activity");
+    const res = await partnerApi.get("/api/activity").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -819,7 +819,7 @@ describe("GET /api/activity", () => {
   });
 
   it("accepts a member filter", async () => {
-    const membersRes = await partnerApi.get("/api/members");
+    const membersRes = await partnerApi.get("/api/members").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(membersRes.status).toBe(200);
     expect(Array.isArray(membersRes.body)).toBe(true);
@@ -828,7 +828,7 @@ describe("GET /api/activity", () => {
     const memberId = membersRes.body[0].id;
 
     const res = await partnerApi
-      .get("/api/activity")
+      .get("/api/activity").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({ member: memberId });
 
     expect(res.status).toBe(200);
@@ -841,7 +841,7 @@ describe("GET /api/activity", () => {
 
   it("returns 400 for an invalid member filter", async () => {
     const res = await partnerApi
-      .get("/api/activity")
+      .get("/api/activity").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({ member: "" });
 
     expect(res.status).toBe(400);
@@ -852,14 +852,14 @@ describe("GET /api/activity", () => {
 
 describe("GET /api/flashcards", () => {
   it("returns 200 and an array of flashcard decks", async () => {
-    const res = await partnerApi.get("/api/flashcards");
+    const res = await partnerApi.get("/api/flashcards").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
   });
 
   it("returns decks with the required fields and cards", async () => {
-    const res = await partnerApi.get("/api/flashcards");
+    const res = await partnerApi.get("/api/flashcards").set("X-API-Key", process.env.TEAM_TEST_API_KEY);
 
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -889,7 +889,7 @@ describe("GET /api/flashcards", () => {
 
   it("accepts a groupId filter", async () => {
     const res = await partnerApi
-      .get("/api/flashcards")
+      .get("/api/flashcards").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({ groupId: "test-group" });
 
     expect(res.status).toBe(200);
@@ -898,7 +898,7 @@ describe("GET /api/flashcards", () => {
 
   it("returns 400 for an invalid groupId", async () => {
     const res = await partnerApi
-      .get("/api/flashcards")
+      .get("/api/flashcards").set("X-API-Key", process.env.TEAM_TEST_API_KEY)
       .query({ groupId: "" });
 
     expect(res.status).toBe(400);
