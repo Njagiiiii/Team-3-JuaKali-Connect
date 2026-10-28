@@ -19,3 +19,4 @@
 - **Whose Code:** No bug identified on either side.
 - **Evidence:** Successful response received from the partner API through PowerShell.
 
+####The other part of the lab will be presented in class once the API keys have been created

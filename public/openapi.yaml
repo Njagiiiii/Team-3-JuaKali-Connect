@@ -59,7 +59,7 @@ paths:
                     example: "pending"
 
         "400":
-          description: Invalid request — missing or invalid fields
+          description: Invalid request â€” missing or invalid fields
 
   /sessions:
     post:
@@ -87,21 +87,31 @@ paths:
         "429":
           description: Rate limit exceeded; retry later (see Retry-After header)
         "201":
-          description: Session created successfully
+          description: Authentication successful
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  token:
+                  message:
                     type: string
-                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                  userId:
-                    type: integer
-                    example: 12
+                    example: "Authentication successful"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 12
+                      full_name:
+                        type: string
+                        example: "Example User"
+                      email:
+                        type: string
+                        format: email
+                        example: "user@example.com"
 
         "400":
-          description: Invalid request — missing or invalid fields
+          description: Invalid request â€” missing or invalid fields
 
         "401":
           description: Invalid email or password
