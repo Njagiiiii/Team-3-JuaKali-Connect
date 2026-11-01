@@ -1,4 +1,5 @@
 const express = require("express");
+const { fetchWithRetry } = require("./resilientFetch");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
@@ -16,6 +17,7 @@ const rateLimiter = require("./middleware/rateLimiter");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+let lastGoodPartnerMembers = null;
 
 const swaggerDocument = YAML.load(
   path.join(__dirname, "..", "public", "openapi.yaml"),
@@ -38,8 +40,16 @@ app.get("/api/partner/members", async (req, res) => {
   const partnerUrl = process.env.PARTNER_URL;
 
   if (!partnerUrl) {
+    if (lastGoodPartnerMembers) {
+      return res.json({
+        data: lastGoodPartnerMembers.data,
+        stale: true,
+        asOf: lastGoodPartnerMembers.asOf,
+      });
+    }
+
     return res.status(503).json({
-      message: "Partner integration is not configured yet.",
+      message: "StudySync is currently unavailable. Please try again later.",
     });
   }
 
@@ -52,49 +62,66 @@ app.get("/api/partner/members", async (req, res) => {
       headers["X-API-Key"] = process.env.PARTNER_API_KEY;
     }
 
-    const response = await fetch(`${partnerUrl.replace(/\/+$/, "")}/members`, {
-      method: "GET",
-      headers,
-    });
+    const response = await fetchWithRetry(
+      `${partnerUrl.replace(/\/+$/, "")}/members`,
+      {
+        method: "GET",
+        headers,
+      },
+      {
+        timeoutMs: 1500,
+        retries: 2,
+        delayMs: 200,
+      },
+    );
 
     if (!response.ok) {
       console.error("Partner API returned HTTP status:", response.status);
 
-      return res.status(502).json({
-        message: "The partner service could not provide member data.",
-        partnerStatus: response.status,
-      });
+      throw new Error(`Partner API returned HTTP ${response.status}`);
     }
 
-    const data = await response.json();
+    const result = await response.json();
 
-    const members = Array.isArray(data)
-      ? data
-      : Array.isArray(data.members)
-        ? data.members
+    const members = Array.isArray(result)
+      ? result
+      : Array.isArray(result.members)
+        ? result.members
         : null;
 
     if (!members) {
-      console.error("Partner API returned an unexpected response format.");
-
-      return res.status(502).json({
-        message: "The partner service returned an unexpected data format.",
-      });
+      throw new Error("Partner API returned an unexpected data format.");
     }
 
-    return res.json({ members });
+    lastGoodPartnerMembers = {
+      data: members,
+      asOf: new Date().toISOString(),
+    };
+
+    return res.json({
+      data: lastGoodPartnerMembers.data,
+      stale: false,
+      asOf: lastGoodPartnerMembers.asOf,
+    });
   } catch (error) {
     console.error(
       "Partner API connection failed:",
-      error.cause?.code || error.code || error.message,
+      error.cause?.code || error.message,
     );
 
-    return res.status(503).json({
+    if (lastGoodPartnerMembers) {
+      return res.json({
+        data: lastGoodPartnerMembers.data,
+        stale: true,
+        asOf: lastGoodPartnerMembers.asOf,
+      });
+    }
+
+    return res.status(502).json({
       message: "StudySync is currently unavailable. Please try again later.",
     });
   }
 });
-
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/artisans", artisanRoutes);
 app.use("/api/sessions", sessionRoutes);
