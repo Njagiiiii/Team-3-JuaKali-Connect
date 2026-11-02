@@ -112,3 +112,42 @@ The retry mechanism was also verified using error mode. The stand-in partner log
 
 A circuit breaker was not implemented; it would act as a switch that temporarily stops requests to a partner API after repeated failures and occasionally allows a test request to check whether the service has recovered, whereas our implementation still attempts every request up to three times before falling back to cached data.
 
+### Real Partner Integration and Failure Test
+
+The real StudySync partner API was successfully contacted using
+the `/api/members` endpoint and the required API key.
+
+Five members were successfully retrieved, and the backend
+returned `stale: false`.
+
+The partner backend and Cloudflare tunnel were subsequently
+stopped. A direct request to the partner URL returned HTTP 530,
+confirming that the partner service was unavailable.
+
+A request to the local Jua Kali Connect backend still returned
+all five previously retrieved members with `stale: true`.
+The original timestamp was preserved:
+
+2026-11-02T10:08:00.008Z
+
+This confirmed that the cached-data fallback works with the
+real partner integration.
+
+### Real Partner Recovery Test
+
+After the partner service was unavailable, Team 2 provided a
+new Cloudflare tunnel URL:
+
+https://works-tubes-with-porter.trycloudflare.com
+
+The new endpoint was tested directly and successfully returned
+five members.
+
+The PARTNER_URL configuration was updated and the backend
+restarted. A request to the local Jua Kali Connect endpoint
+successfully retrieved all five members.
+
+The backend returned stale: false, confirming that live data
+was restored after the partner service became available.
+
+Recovery timestamp: 2026-11-02T10:50:54.011Z

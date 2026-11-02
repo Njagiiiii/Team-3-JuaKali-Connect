@@ -6,7 +6,7 @@ const YAML = require("yamljs");
 const path = require("path");
 
 require("dotenv").config({
-  path: require("path").join(__dirname, ".env"),
+  path: require("path").join(__dirname, ".env."),
 });
 
 const bookingRoutes = require("./routes/bookings");
@@ -63,17 +63,17 @@ app.get("/api/partner/members", async (req, res) => {
     }
 
     const response = await fetchWithRetry(
-      `${partnerUrl.replace(/\/+$/, "")}/members`,
-      {
-        method: "GET",
-        headers,
-      },
-      {
-        timeoutMs: 1500,
-        retries: 2,
-        delayMs: 200,
-      },
-    );
+  `${partnerUrl.replace(/\/+$/, "")}/api/members`,
+  {
+    method: "GET",
+    headers,
+  },
+  {
+    timeoutMs: 1500,
+    retries: 2,
+    delayMs: 200,
+  },
+);
 
     if (!response.ok) {
       console.error("Partner API returned HTTP status:", response.status);

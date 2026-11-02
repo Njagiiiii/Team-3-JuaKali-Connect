@@ -23,7 +23,7 @@ function Dashboard() {
   "http://localhost:5000/api/partner/members",
   {
     headers: {
-      "X-API-Key": "YourTeam3TestAPIKeyHere",
+      "X-API-Key": "TEAM_TEST_API_KEY",
     },
     signal: controller.signal
   }
