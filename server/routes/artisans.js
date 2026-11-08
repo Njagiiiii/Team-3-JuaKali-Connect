@@ -4,10 +4,13 @@ const router = express.Router();
 
 const db = require("../db");
 
+app.use(monitor);
+
 // GET all artisans
 // GET /api/artisans
 
 router.get("/", async (req, res) => {
+  
   try {
     const { search, location } = req.query;
 
@@ -90,7 +93,7 @@ router.get("/:id", async (req, res) => {
         message: "Artisan not found",
       });
     }
-
+    
     const artisan = rows[0];
 
     // Map database fields to OpenAPI response fields
@@ -166,6 +169,7 @@ router.post("/", async (req, res) => {
         agreed_to_code_of_conduct,
       ],
     );
+    
 
     res.status(201).json({
       message: "Artisan registered successfully",

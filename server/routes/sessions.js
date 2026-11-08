@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
-
+app.use(monitor);
 // POST /api/sessions
 router.post("/", async (req, res) => {
   try {
@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
     }
 
     const user = rows[0];
-
+  
     // Check password
     if (user.password !== password) {
       return res.status(401).json({
