@@ -26,16 +26,25 @@ function who(req) {
 
   if (!apiKey) return "none";
 
-  const hash = crypto
-    .createHash("sha256")
-    .update(apiKey)
-    .digest("hex");
+  const hash = crypto.createHash("sha256").update(apiKey).digest("hex");
 
   return "key-" + hash.slice(0, 6);
 }
 
 function monitor(req, res, next) {
   const started = process.hrtime.bigint();
+  const requestPath = req.originalUrl.split("?")[0];
+
+  // Capture the matched Express route when the response is sent.
+  const originalEnd = res.end;
+
+  res.end = function (...args) {
+    if (req.route) {
+      req.monitorRoute = req.baseUrl + req.route.path;
+    }
+
+    return originalEnd.apply(this, args);
+  };
 
   res.on("finish", () => {
     const finished = process.hrtime.bigint();
@@ -47,16 +56,14 @@ function monitor(req, res, next) {
         time: new Date().toISOString(),
         caller: who(req),
         method: req.method,
-        path: req.path,
+        path: requestPath,
         status: res.statusCode,
         ms: round(ms),
-      })
+      }),
     );
 
-    // Route statistics
-    const route = req.route
-      ? req.baseUrl + req.route.path
-      : "(no route)";
+    // Use the route pattern captured before response completion.
+    const route = req.monitorRoute || "(no route)";
 
     const label = `${req.method} ${route}`;
 
@@ -96,13 +103,9 @@ function statsHandler(req, res) {
     };
   }
 
-  const rate = stats.total
-    ? (stats.serverErrors / stats.total) * 100
-    : 0;
+  const rate = stats.total ? (stats.serverErrors / stats.total) * 100 : 0;
 
-  const avg = stats.total
-    ? stats.totalMs / stats.total
-    : 0;
+  const avg = stats.total ? stats.totalMs / stats.total : 0;
 
   res.json({
     startedAt: stats.startedAt,

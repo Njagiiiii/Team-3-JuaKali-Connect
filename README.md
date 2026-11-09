@@ -1,5 +1,4 @@
-﻿
-# Jua Kali Connect API
+﻿# Jua Kali Connect API
 
 ## 1. Overview
 
@@ -25,7 +24,7 @@ curl.exe -i -H "X-API-Key: YOUR_ASSIGNED_KEY" http://localhost:5000/api/artisans
 Missing or incorrect keys return HTTP 401:
 
 ```json
-{"message":"Missing or invalid API key"}
+{ "message": "Missing or invalid API key" }
 ```
 
 ### Rate limiting
@@ -34,15 +33,96 @@ Each authenticated consumer is allowed 100 requests per minute by default.
 Exceeding this limit returns HTTP 429 with a `Retry-After` header:
 
 ```json
-{"message":"Too many requests. Please try again later."}
+{ "message": "Too many requests. Please try again later." }
 ```
 
 Set `RATE_LIMIT_MAX=100` in `server/.env`.
 
+### Request monitoring (Week 12)
+
+The API includes request monitoring middleware that records requests before authentication and rate limiting. This allows successful requests and rejected requests to be observed.
+
+Each request log contains:
+
+- Timestamp
+- Caller label derived from a SHA-256 fingerprint of the API key
+- HTTP method
+- Request path without query parameters
+- HTTP response status
+- Response time in milliseconds
+
+The actual API key is never written to the request log.
+
+#### Monitoring statistics
+
+**Method:** `GET`
+
+**Endpoint:** `/stats`
+
+The endpoint requires a valid `X-API-Key` header and is subject to the API rate limiter.
+
+Example request:
+
+```powershell
+curl.exe -i -H "X-API-Key: YOUR_ASSIGNED_KEY" http://localhost:5000/stats
+```
+
+The response provides:
+
+- Server start time and uptime
+- Total monitored requests
+- Client errors (4xx)
+- Server errors (5xx)
+- Server error rate as a percentage
+- Average response time
+- Per-route request counts, error counts, average response time and maximum response time
+
+Example response structure (values are illustrative):
+
+```json
+{
+  "startedAt": "2026-11-09T09:36:53.954Z",
+  "uptimeSeconds": 782,
+  "total": 67,
+  "clientErrors": 39,
+  "serverErrors": 0,
+  "errorRatePercent": 0,
+  "avgMs": 6.2,
+  "routes": {
+    "GET /api/artisans/:id": {
+      "count": 18,
+      "clientErrors": 8,
+      "serverErrors": 0,
+      "avgMs": 16,
+      "maxMs": 250.1
+    }
+  }
+}
+```
+
+The `errorRatePercent` field measures the 5xx server-error rate, not the combined 4xx and 5xx rate. Monitoring statistics are stored in memory and reset when the server restarts.
+
+#### Generating test traffic
+
+The root-level `traffic.js` script generates a mixture of valid requests, invalid resource requests, authentication failures and invalid login attempts.
+
+Run it from the project root:
+
+```powershell
+$env:KEY = "YOUR_ASSIGNED_KEY"
+$env:N = "60"
+node traffic.js
+```
+
+The script accepts `API`, `KEY` and `N` environment variables to configure the API address, test key and request count.
+
+Do not commit real API keys, `.env` files or request logs to the repository.
+
 ### Sessions
 
 `POST /api/sessions` also requires an API key. It does not currently issue a Bearer token.
-Password hashing and detailed login testing are outstanding security tasks.
+Passwords are checked using bcrypt. The login endpoint requires an API key and currently does not issue a Bearer token. Invalid login credentials are rejected.
+
 ## 3. API Endpoints
 
 The local API base URL is:
@@ -229,15 +309,15 @@ These are examples based on the current documentation and must be checked agains
 
 Common HTTP status codes:
 
-| Status | Meaning |
-|---|---|
-| `200` | Request completed successfully |
-| `201` | Resource created or login accepted |
-| `400` | Invalid or incomplete request |
-| `401` | Missing/invalid API key or invalid login credentials |
-| `404` | Resource or matching results not found |
-| `429` | Rate limit exceeded; wait for Retry-After |
-| `500` | Server or database error |
+| Status | Meaning                                              |
+| ------ | ---------------------------------------------------- |
+| `200`  | Request completed successfully                       |
+| `201`  | Resource created or login accepted                   |
+| `400`  | Invalid or incomplete request                        |
+| `401`  | Missing/invalid API key or invalid login credentials |
+| `404`  | Resource or matching results not found               |
+| `429`  | Rate limit exceeded; wait for Retry-After            |
+| `500`  | Server or database error                             |
 
 Callers should check the HTTP status code as well as the response body to determine whether a request succeeded.
 
@@ -335,8 +415,6 @@ The current OpenAPI specification documents these five operations:
 - `POST /sessions`
 - `GET /artisans`
 - `GET /artisans/{id}`
-
-
 
 ## Week 9 Environment Variables
 
