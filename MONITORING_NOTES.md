@@ -11,6 +11,11 @@ Before generating traffic, I expected:
 - The monitoring middleware to record both successful and rejected requests.
 - Requests to the same parameterized endpoint to be grouped under one route pattern.
 
+**Performance predictions:**
+
+- **Slowest endpoint:** I predicted that `GET /api/artisans/:id` would have the slowest average response time because retrieving a specific artisan requires looking up an individual record using its ID in the database.
+- **Endpoint with the most errors:** I predicted that `POST /api/sessions/` would produce the most errors because login requests depend on valid user credentials, and incorrect or nonexistent credentials can result in rejected requests.
+
 ## 2. Traffic-generation test
 
 The `traffic.js` script generated 60 requests against the local API.
@@ -45,16 +50,18 @@ The snapshot includes the 60 generated requests and additional manual verificati
 
 ### Route-level observations
 
-| Route pattern         | Count | Client errors | Average response time |
-| --------------------- | ----: | ------------: | --------------------: |
-| GET /api/artisans/:id |    18 |             8 |                 16 ms |
-| GET /api/artisans/    |     8 |             0 |                5.5 ms |
-| GET /api/bookings/    |     8 |             0 |                6.6 ms |
-| POST /api/sessions/   |     7 |             7 |                0.9 ms |
-| GET /stats            |     2 |             0 |                1.6 ms |
-| GET (no route)        |    24 |            24 |                0.9 ms |
+| Route pattern         | Count | Client errors | Average response time | Maximum response time |
+| --------------------- | ----: | ------------: | --------------------: | --------------------: |
+| GET /api/artisans/:id |    18 |             8 |                 16 ms |              250.1 ms |
+| GET /api/artisans/    |     8 |             0 |                5.5 ms |               28.1 ms |
+| GET /api/bookings/    |     8 |             0 |                6.6 ms |                 39 ms |
+| POST /api/sessions/   |     7 |             7 |                0.9 ms |                  1 ms |
+| GET /stats            |     2 |             0 |                1.6 ms |                1.6 ms |
+| GET (no route)        |    24 |            24 |                0.9 ms |                3.5 ms |
 
-The parameterized artisan endpoint was correctly grouped as `GET /api/artisans/:id`, rather than being recorded as separate routes for each artisan ID.
+The parameterized artisan endpoint was correctly grouped as
+GET /api/artisans/:id, rather than being recorded as separate
+routes for each artisan ID.
 
 ## 4. Analysis and hypothesis
 
@@ -66,6 +73,24 @@ A useful next investigation would be to separate authentication failures from no
 
 The reported `errorRatePercent` currently represents the server-error rate (5xx responses divided by total requests), not the combined 4xx and 5xx rate. The 39 client errors therefore do not increase this metric.
 
+### Comparison of measured performance and errors
+
+GET /api/artisans/:id had the slowest average response time
+at 16 ms and the highest maximum response time at 250.1 ms.
+
+GET (no route) recorded the highest number of client errors,
+with 24 errors across 24 requests. This included requests
+rejected before reaching a valid route.
+
+The artisan detail endpoint also recorded 8 client errors
+out of 18 requests, while the session endpoint recorded
+7 client errors out of 7 requests.
+
+The difference between average and maximum response times
+shows that an average alone can hide occasional slow requests.
+I would investigate the artisan detail endpoint further to
+identify what caused its 250.1 ms maximum response time.
+
 ## 5. Proposed production alert
 
 Proposed alert: notify the API maintainer if the 5xx server-error rate exceeds 5% over a rolling five-minute period.
@@ -75,3 +100,16 @@ This threshold is a proposed operational alert, not a result measured in this lo
 ## 6. Limitations
 
 The monitoring statistics are held in memory and reset when the server restarts. They are useful for the lab and short-term observation but are not a replacement for persistent production monitoring and historical metrics.
+
+## Sample Request Logs
+
+### Successful request (200)
+
+{"time":"2026-11-09T12:53:00.424Z","caller":"key-25e96c","method":"GET","path":"/api/artisans","status":200,"ms":136.6}
+
+### Rejected request (401)
+
+{"time":"2026-11-09T12:53:15.397Z","caller":"key-fc04b5","method":"GET","path":"/api/artisans","status":401,"ms":1.9}
+
+The logs demonstrate that both authenticated and rejected
+requests are monitored. The API key itself is not recorded.
