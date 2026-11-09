@@ -1,0 +1,32 @@
+{
+    "startedAt":  "2026-11-09T14:48:05.996Z",
+    "uptimeSeconds":  1043,
+    "total":  5,
+    "clientErrors":  0,
+    "serverErrors":  0,
+    "errorRatePercent":  0,
+    "avgMs":  31.4,
+    "routes":  {
+                   "GET /api/artisans/":  {
+                                              "count":  2,
+                                              "clientErrors":  0,
+                                              "serverErrors":  0,
+                                              "avgMs":  73.7,
+                                              "maxMs":  133.3
+                                          },
+                   "GET /api/v1/artisans/":  {
+                                                 "count":  2,
+                                                 "clientErrors":  0,
+                                                 "serverErrors":  0,
+                                                 "avgMs":  3.5,
+                                                 "maxMs":  3.7
+                                             },
+                   "GET /api/v2/artisans/":  {
+                                                 "count":  1,
+                                                 "clientErrors":  0,
+                                                 "serverErrors":  0,
+                                                 "avgMs":  2.6,
+                                                 "maxMs":  2.6
+                                             }
+               }
+}

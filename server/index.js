@@ -12,6 +12,8 @@ require("dotenv").config({
 const bookingRoutes = require("./routes/bookings");
 const artisanRoutes = require("./routes/artisans");
 const sessionRoutes = require("./routes/sessions");
+const v2ArtisanRoutes = require("./routes/artisans.v2");
+const deprecate = require("./middleware/deprecate");
 const requireApiKey = require("./middleware/requireApiKey");
 const rateLimiter = require("./middleware/rateLimiter");
 const { monitor, statsHandler } = require("./middleware/monitoring");
@@ -130,8 +132,12 @@ app.get("/api/partner/members", async (req, res) => {
   }
 });
 app.use("/api/bookings", bookingRoutes);
-app.use("/api/artisans", artisanRoutes);
+app.use("/api/artisans", deprecate, artisanRoutes);
 app.use("/api/sessions", sessionRoutes);
+// Week 13: Versioned artisan endpoints
+
+app.use("/api/v1/artisans", deprecate, artisanRoutes);
+app.use("/api/v2/artisans", v2ArtisanRoutes);
 
 if (require.main === module) {
   app.listen(PORT, () => {

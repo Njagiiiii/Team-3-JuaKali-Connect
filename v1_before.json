@@ -1,0 +1,44 @@
+[
+    {
+        "id":  7,
+        "name":  "Triza Naomi",
+        "service":  "Mechanic",
+        "rating":  4.9
+    },
+    {
+        "id":  6,
+        "name":  "Wacheru Wangui",
+        "service":  "Plumbing",
+        "rating":  5
+    },
+    {
+        "id":  5,
+        "name":  "Amina Yusuf",
+        "service":  "Painting",
+        "rating":  4.5
+    },
+    {
+        "id":  4,
+        "name":  "Wacheru Wangui",
+        "service":  "Plumbing",
+        "rating":  5
+    },
+    {
+        "id":  3,
+        "name":  "Esther Mwende",
+        "service":  "Tailoring",
+        "rating":  4.7
+    },
+    {
+        "id":  2,
+        "name":  "Peter Onyango",
+        "service":  "mechanic",
+        "rating":  4
+    },
+    {
+        "id":  1,
+        "name":  "Jusepy Geniva",
+        "service":  "Masonry",
+        "rating":  4.6
+    }
+]

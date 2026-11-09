@@ -113,3 +113,29 @@ The monitoring statistics are held in memory and reset when the server restarts.
 
 The logs demonstrate that both authenticated and rejected
 requests are monitored. The API key itself is not recorded.
+
+## Week 13: API Versioning Monitoring Evidence
+
+### Versioned endpoint verification
+
+On 9 November 2026, authenticated GET requests were sent to all three artisan endpoints to verify that the monitoring middleware records traffic across API versions.
+
+| Endpoint           | HTTP status | Response time |
+| ------------------ | ----------: | ------------: |
+| `/api/artisans`    |         200 |        3.5 ms |
+| `/api/v1/artisans` |         200 |        2.2 ms |
+| `/api/v2/artisans` |         200 |        2.2 ms |
+
+### Monitoring observations
+
+- All three endpoints were recorded by the monitoring middleware.
+- Each request included the same hashed caller identifier.
+- All requests returned HTTP 200.
+- No API keys were exposed in the monitoring logs.
+- The `/stats` endpoint also recorded the versioned route activity.
+
+The monitoring statistics were saved in `week13_monitoring_evidence.json`.
+
+### Conclusion
+
+The monitoring system successfully records requests to the legacy, v1 and v2 artisan endpoints. This provides visibility into API usage during the version migration period.
