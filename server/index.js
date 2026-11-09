@@ -12,8 +12,11 @@ require("dotenv").config({
 const bookingRoutes = require("./routes/bookings");
 const artisanRoutes = require("./routes/artisans");
 const sessionRoutes = require("./routes/sessions");
+const v2ArtisanRoutes = require("./routes/artisans.v2");
+const deprecate = require("./middleware/deprecate");
 const requireApiKey = require("./middleware/requireApiKey");
 const rateLimiter = require("./middleware/rateLimiter");
+const { monitor, statsHandler } = require("./middleware/monitoring");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,9 +29,15 @@ const swaggerDocument = YAML.load(
 app.use(cors());
 app.use(express.json());
 
-// Require a valid API key before accessing protected endpoints
+// Week 12: Monitor requests before authentication and rate limiting
+app.use(monitor);
+
+// Week 9: Protect endpoints with API-key authentication and rate limiting
 app.use(requireApiKey);
 app.use(rateLimiter);
+
+// Week 12: Protected monitoring statistics
+app.get("/stats", statsHandler);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -123,8 +132,12 @@ app.get("/api/partner/members", async (req, res) => {
   }
 });
 app.use("/api/bookings", bookingRoutes);
-app.use("/api/artisans", artisanRoutes);
+app.use("/api/artisans", deprecate, artisanRoutes);
 app.use("/api/sessions", sessionRoutes);
+// Week 13: Versioned artisan endpoints
+
+app.use("/api/v1/artisans", deprecate, artisanRoutes);
+app.use("/api/v2/artisans", v2ArtisanRoutes);
 
 if (require.main === module) {
   app.listen(PORT, () => {
