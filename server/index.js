@@ -14,6 +14,7 @@ const artisanRoutes = require("./routes/artisans");
 const sessionRoutes = require("./routes/sessions");
 const requireApiKey = require("./middleware/requireApiKey");
 const rateLimiter = require("./middleware/rateLimiter");
+const { monitor, statsHandler } = require("./middleware/monitoring");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -26,9 +27,15 @@ const swaggerDocument = YAML.load(
 app.use(cors());
 app.use(express.json());
 
-// Require a valid API key before accessing protected endpoints
+// Week 12: Monitor requests before authentication and rate limiting
+app.use(monitor);
+
+// Week 9: Protect endpoints with API-key authentication and rate limiting
 app.use(requireApiKey);
 app.use(rateLimiter);
+
+// Week 12: Protected monitoring statistics
+app.get("/stats", statsHandler);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
