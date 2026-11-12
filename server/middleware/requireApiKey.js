@@ -6,7 +6,7 @@ function requireApiKey(req, res, next) {
   const validKeys = [
     {
       name: "group4",
-      key: process.env.DOWNSTREAM_API_KEY,
+      key: process.env.GROUP4_API_KEY,
     },
     {
       name: "team3",

@@ -6,7 +6,7 @@ const YAML = require("yamljs");
 const path = require("path");
 
 require("dotenv").config({
-  path: require("path").join(__dirname, ".env."),
+  path: require("path").join(__dirname, ".env"),
 });
 
 const bookingRoutes = require("./routes/bookings");
